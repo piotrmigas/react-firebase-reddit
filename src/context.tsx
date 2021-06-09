@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
+import { createContext, useContext, useEffect } from "react";
 import { auth } from "./firebase";
 import createPersistedReducer from "use-persisted-reducer";
 import { User, Sub, Comment, Vote, Post } from "./types";
@@ -73,7 +73,7 @@ const reducer = (state: State, { type, payload }: Action) => {
 };
 
 export const Provider = ({ children }: { children: React.ReactNode }) => {
-  const [state, defaultDispatch] = useReducer(reducer, {
+  const [state, defaultDispatch] = usePersistedReducer(reducer, {
     user: null,
     authenticated: false,
     subs: [],

@@ -73,11 +73,12 @@ const Home = () => {
     );
   }, []);
 
+  if (!posts.length) return <p className="text-lg text-center mt-4">Loading..</p>;
+  if (loadingError) return <p className="text-lg text-center mt-4">Error fetching posts..</p>;
+
   return (
     <div className="container flex pt-4">
       <div className="w-full md:w-160 px-4 md:p-0">
-        {!posts.length && <p className="text-lg text-center">Loading..</p>}
-        {loadingError && <p className="text-lg text-center">Error fetching posts..</p>}
         {posts.map((post) => (
           <PostCard post={post} key={post.id} />
         ))}
