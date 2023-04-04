@@ -9,7 +9,7 @@ import Modal from '../components/Modal';
 import { v4 } from 'uuid';
 import { storage, db } from '../firebase';
 import { slugify } from '../slugify';
-import { Comment, Post, Sub, User } from '../types';
+import { User } from '../types';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, updateDoc } from 'firebase/firestore';
 
@@ -26,7 +26,7 @@ const UserProfile = () => {
   const userProfile = users?.find((i) => i.username === username) as User;
   const userPosts = posts.filter((i) => i.username === userProfile.username);
   const userComments = comments.filter((i) => i.username === userProfile.username);
-  const submissions: (Post | Comment)[] = [...userPosts, ...userComments];
+  const submissions: any = [...userPosts, ...userComments];
 
   const handleUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const files = (e.target as HTMLInputElement).files;
@@ -76,11 +76,10 @@ const UserProfile = () => {
             <h1 className='text-lg font-semibold pb-3'>Recent activity</h1>
             {submissions
               .sort((a: any, b: any) => b.createdAt - a.createdAt)
-              .map((submission: any) => {
+              .map((submission) => {
                 if (submission.hasOwnProperty('postId')) {
-                  const comment: Comment = submission;
                   return (
-                    <div className='flex my-4 bg-white rounded' key={comment.id}>
+                    <div className='flex my-4 bg-white rounded' key={submission.id}>
                       <div className='bg-gray-200 flex-shrink-0 w-10 py-4 text-center rounded-l'>
                         <i className='fas fa-comment-alt fa-xs text-gray-500' />
                       </div>
@@ -89,19 +88,19 @@ const UserProfile = () => {
                           {userProfile?.username}
                           <span> commented on </span>
                           <Link
-                            to={`/r/${comment.subName}/${comment.postId}/${slugify(comment.postTitle)}`}
+                            to={`/r/${submission.subName}/${submission.postId}/${slugify(submission.postTitle)}`}
                             className='font-semibold hover:underline'
                           >
-                            {comment.postTitle}
+                            {submission.postTitle}
                           </Link>{' '}
-                          {dayjs(comment.createdAt.seconds * 1000).fromNow()}
+                          {dayjs(submission.createdAt.seconds * 1000).fromNow()}
                           <span className='mx-1'>•</span>
-                          <Link to={`/r/${comment.subName}`} className='hover:underline'>
-                            /r/{comment.subName}
+                          <Link to={`/r/${submission.subName}`} className='hover:underline'>
+                            /r/{submission.subName}
                           </Link>
                         </p>
                         <hr />
-                        <p>{comment.body}</p>
+                        <p>{submission.body}</p>
                       </div>
                     </div>
                   );

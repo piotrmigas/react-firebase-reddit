@@ -27,7 +27,7 @@ const StateContext = createContext<State>({
   posts: [],
 });
 
-const DispatchContext = createContext<any>(null);
+const DispatchContext = createContext(null);
 
 const reducer = (state: State, { type, payload }: Action) => {
   switch (type) {
