@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, FormEventHandler, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -24,7 +24,7 @@ const SinglePost = () => {
   const post = posts.find((post) => slugify(post.title) === postname);
   const postComments = comments?.filter((i) => i.postId === post?.id);
 
-  const submitComment = (e: FormEvent) => {
+  const submitComment = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (newComment.trim() === '') return;
 

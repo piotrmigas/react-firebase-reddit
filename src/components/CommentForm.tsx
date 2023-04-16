@@ -1,11 +1,11 @@
-import { ChangeEvent, FormEvent, Dispatch } from 'react';
+import { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { User } from '../types';
 
 type CommentFormProps = {
   newComment: string;
-  setNewComment: Dispatch<string>;
-  submitComment: (e: FormEvent) => void;
+  setNewComment: (value: string) => void;
+  submitComment: (e: FormEvent<HTMLFormElement>) => void;
   user: User;
 };
 
@@ -21,12 +21,11 @@ const CommentForm = ({ newComment, setNewComment, submitComment, user }: Comment
       <form onSubmit={submitComment}>
         <textarea
           value={newComment}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>): void => setNewComment(e.target.value)}
-          className='w-full p-3 border bored-gray-300 rounded focus:outline-none focus:border-gray-600'
-          style={{ resize: 'none' }}
+          onChange={(e) => setNewComment(e.target.value)}
+          className='w-full p-3 border bored-gray-300 rounded focus:outline-none focus:border-gray-600 resize-none'
         />
         <div className='flex justify-end'>
-          <button className='px-3 py-1 blue button' disabled={newComment.trim() === ''}>
+          <button className='px-3 py-1 blue button' disabled={newComment.trim() === ''} type='submit'>
             Comment
           </button>
         </div>
