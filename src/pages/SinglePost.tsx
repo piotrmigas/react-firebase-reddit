@@ -95,7 +95,7 @@ const SinglePost = () => {
                 </div>
               </div>
               <div className='pl-10 pr-6 mb-4'>
-                {authenticated && user ? (
+                {authenticated  ? (
                   <CommentForm
                     setNewComment={setNewComment}
                     submitComment={submitComment}
