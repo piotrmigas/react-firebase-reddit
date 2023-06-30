@@ -2,22 +2,27 @@ import { ChangeEvent } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { useState, useEffect, MouseEvent } from 'react';
-import { useContextState } from '../context';
 import PostCard from '../components/PostCard';
 import { Link, useParams } from 'react-router-dom';
 import Modal from '../components/Modal';
 import { v4 } from 'uuid';
 import { storage, db } from '../firebase';
 import { slugify } from '../slugify';
-import { User } from '../types';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, updateDoc } from 'firebase/firestore';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../redux/userSlice';
+import { useGetUsersQuery, useGetPostsQuery, useGetCommentsQuery } from '../redux/api';
 
 dayjs.extend(relativeTime);
 
 const UserProfile = () => {
   const { username } = useParams<{ username: string }>();
-  const { users, comments, user, posts } = useContextState();
+  const user = useSelector(selectUser);
+  const { data: users } = useGetUsersQuery();
+  const { data: posts } = useGetPostsQuery();
+  const { data: comments } = useGetCommentsQuery();
+
   const [modal, setModal] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [imageType, setImageType] = useState('');
@@ -106,7 +111,7 @@ const UserProfile = () => {
                   );
                 } else {
                   const post = submission;
-                  return <PostCard key={post.id} post={post} />;
+                  return <PostCard key={post.id} post={post} user={user} />;
                 }
               })}
           </div>

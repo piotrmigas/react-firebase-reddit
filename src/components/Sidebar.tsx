@@ -1,14 +1,12 @@
 import dayjs from 'dayjs';
-import { useContextState } from '../context';
 import { Link, useLocation } from 'react-router-dom';
-import { Sub } from '../types';
 
-type SideBarProps = {
+type Props = {
   sub: Sub;
+  user: User;
 };
 
-const Sidebar = ({ sub }: SideBarProps) => {
-  const { authenticated } = useContextState();
+const Sidebar = ({ sub, user }: Props) => {
   const location = useLocation();
 
   return (
@@ -33,7 +31,7 @@ const Sidebar = ({ sub }: SideBarProps) => {
             <i className='fas fa-birthday-cake mr-2' />
             Created {dayjs(sub.createdAt.seconds * 1000).format('D/MM/YYYY')}
           </p>
-          {authenticated && location.pathname !== `/r/${sub.name}/submit` && (
+          {user && location.pathname !== `/r/${sub.name}/submit` && (
             <Link to={`/r/${sub.name}/submit`} className='text-sm py-1 w-full blue button'>
               Create Post
             </Link>

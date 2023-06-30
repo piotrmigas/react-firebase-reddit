@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { db } from '../firebase';
-import { useContextState } from '../context';
+import { useGetSubsQuery } from '../redux/api';
 import { addDoc, collection } from 'firebase/firestore';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../redux/userSlice';
 
 type FormValues = {
   title: string;
@@ -11,7 +13,9 @@ type FormValues = {
 };
 
 const CreateSub = () => {
-  const { user, subs } = useContextState();
+  const user = useSelector(selectUser);
+  const { data: subs } = useGetSubsQuery();
+
   const {
     handleSubmit,
     register,

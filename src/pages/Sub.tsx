@@ -3,11 +3,13 @@ import { v4 } from 'uuid';
 import { useParams } from 'react-router-dom';
 import PostCard from '../components/PostCard';
 import Sidebar from '../components/Sidebar';
-import { useContextState } from '../context';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../redux/userSlice';
 import { storage, db } from '../firebase';
 import Modal from '../components/Modal';
 import { updateDoc, doc, query, where, collection, getDocs } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { useGetPostsQuery, useGetSubsQuery } from '../redux/api';
 
 const Sub = () => {
   const { subname } = useParams<{ subname: string }>();
@@ -16,15 +18,18 @@ const Sub = () => {
   const [modal, setModal] = useState(false);
   const [file, setFile] = useState<File | null>(null);
 
-  const { authenticated, user, subs, posts } = useContextState();
+  const user = useSelector(selectUser);
+
+  const { data: posts } = useGetPostsQuery();
+  const { data: subs } = useGetSubsQuery();
 
   const sub = subs.find((i) => i.name === subname);
   const subPosts = posts.filter((i) => i.subName === sub?.name);
 
   useEffect(() => {
     if (!sub) return;
-    if (authenticated && user?.displayName === sub.username) setOwnSub(true);
-  }, [sub, authenticated, user?.displayName]);
+    if (user && user.displayName === sub.username) setOwnSub(true);
+  }, [sub, user]);
 
   const handleUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const files = (e.target as HTMLInputElement).files;
@@ -62,7 +67,7 @@ const Sub = () => {
   } else {
     postsMarkup = subPosts
       .sort((a, b) => b.voteScore - a.voteScore)
-      .map((post) => <PostCard key={post.id} post={post} />);
+      .map((post) => <PostCard key={post.id} post={post} user={user} />);
   }
 
   const handleClick = (type: string) => {
@@ -126,7 +131,7 @@ const Sub = () => {
           </div>
           <div className='container flex pt-5'>
             <div className='w-160'>{postsMarkup}</div>
-            <Sidebar sub={sub} />
+            <Sidebar sub={sub} user={user} />
           </div>
         </>
       )}

@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useContextState } from '../context';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { auth, db } from '../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../redux/userSlice';
+import { useGetUsersQuery } from '../redux/api';
 
 type FormValues = {
   email: string;
@@ -22,11 +24,12 @@ const Register = () => {
     control,
   } = useForm<FormValues>();
 
-  const { authenticated, users } = useContextState();
+  const user = useSelector(selectUser);
+  const { data: users } = useGetUsersQuery();
 
   useEffect(() => {
-    if (authenticated) navigate('/');
-  }, [authenticated, history]);
+    if (user) navigate('/');
+  }, [user, history]);
 
   const submitForm: SubmitHandler<FormValues> = ({ email, username, password }) => {
     if (users.find((user) => user.username === username)) alert('Username already taken. Please choose another one.');

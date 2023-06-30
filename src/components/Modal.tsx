@@ -1,13 +1,13 @@
 import { ChangeEvent } from 'react';
 
-type ModalProps = {
+type Props = {
   imageType: string;
   closeModal: () => void;
   uploadImage: () => void;
   handleUpload: (e: ChangeEvent<HTMLInputElement>) => void;
 };
 
-const Modal = ({ closeModal, uploadImage, handleUpload, imageType }: ModalProps) => {
+const Modal = ({ closeModal, uploadImage, handleUpload, imageType }: Props) => {
   return (
     <div className='fixed z-10 inset-0 overflow-y-auto'>
       <div className='flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0'>

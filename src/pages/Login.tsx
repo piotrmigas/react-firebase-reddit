@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch, useContextState } from '../context';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { useDispatch, useSelector } from 'react-redux';
 import { auth } from '../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
+import { selectUser } from '../redux/userSlice';
+import { logIn } from '../redux/userSlice';
 
 type FormValues = {
   email: string;
@@ -13,7 +15,7 @@ type FormValues = {
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { authenticated } = useContextState();
+  const user = useSelector(selectUser);
 
   const {
     handleSubmit,
@@ -22,13 +24,13 @@ const Login = () => {
   } = useForm<FormValues>();
 
   useEffect(() => {
-    if (authenticated) navigate('/');
-  }, [authenticated, navigate]);
+    if (user) navigate('/');
+  }, [user, navigate]);
 
   const submitForm: SubmitHandler<FormValues> = ({ email, password }) => {
     signInWithEmailAndPassword(auth, email, password)
-      .then((signedInUser) => {
-        dispatch('LOGIN', signedInUser);
+      .then((signedInUser: any) => {
+        dispatch(logIn(signedInUser));
         navigate(-1);
       })
       .catch((err) => console.error(err));

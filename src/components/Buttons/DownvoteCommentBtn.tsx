@@ -1,15 +1,15 @@
-import { useContextState } from '../../context';
+import { useGetVotesQuery } from '../../redux/api';
 import { increment, collection, addDoc, updateDoc, doc, query, where, getDocs, deleteDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
-import { Vote } from '../../types';
 
-export type VoteCommentBtnProps = {
+type Props = {
   commentId: string;
+  user: User;
 };
 
-const DownvoteCommentBtn = ({ commentId }: VoteCommentBtnProps) => {
-  const { user, votes, authenticated } = useContextState();
+const DownvoteCommentBtn = ({ commentId, user }: Props) => {
+  const { data: votes } = useGetVotesQuery();
 
   const isVotedByUser = votes?.find((vote: Vote) => vote.commentId === commentId && vote.uid === user?.uid);
 
@@ -18,13 +18,13 @@ const DownvoteCommentBtn = ({ commentId }: VoteCommentBtnProps) => {
   const navigate = useNavigate();
 
   const vote = () => {
-    if (!authenticated) navigate('/login');
+    if (!user) navigate('/login');
     addDoc(collection(db, 'votes'), { commentId, uid: user?.uid, type: 'down' });
     updateDoc(doc(db, 'comments', commentId), { voteScore: increment(-1) });
   };
 
   const unvote = async () => {
-    if (!authenticated) navigate('/login');
+    if (!user) navigate('/login');
     const q = query(collection(db, 'votes'), where('commentId', '==', commentId), where('uid', '==', user?.uid));
     const querySnapshot = await getDocs(q);
     querySnapshot.forEach((doc) => deleteDoc(doc.ref));

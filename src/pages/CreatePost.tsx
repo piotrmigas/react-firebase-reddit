@@ -1,14 +1,18 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
-import { useContextState } from '../context';
 import { db } from '../firebase';
 import { increment, addDoc, collection, updateDoc, doc } from 'firebase/firestore';
+import { useGetSubsQuery, useGetPostsQuery } from '../redux/api';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../redux/userSlice';
 
 const CreatePost = () => {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
-  const { subs, user, posts } = useContextState();
+  const { data: subs } = useGetSubsQuery();
+  const { data: posts } = useGetPostsQuery();
+  const user = useSelector(selectUser);
 
   const navigate = useNavigate();
   const { subname } = useParams<{ subname: string }>();
@@ -47,11 +51,11 @@ const CreatePost = () => {
                 placeholder='Title'
                 onChange={(e) => setTitle(e.target.value)}
                 value={title}
-                maxLength={300}
+                maxLength={130}
                 autoComplete='off'
               />
               <div style={{ top: 11, right: 10 }} className='absolute mb-2 text-sm text-gray-500 select-none'>
-                {title.trim().length}/300
+                {title.trim().length}/130
               </div>
             </div>
             <textarea
@@ -70,7 +74,7 @@ const CreatePost = () => {
           </form>
         </div>
       </div>
-      {sub && <Sidebar sub={sub} />}
+      {sub && <Sidebar sub={sub} user={user} />}
     </div>
   );
 };

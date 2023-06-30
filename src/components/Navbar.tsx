@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { useContextState, useDispatch } from '../context';
+import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { auth } from '../firebase';
-import { useNavigate } from 'react-router-dom';
-import { Sub } from '../types';
+import { logOut, selectUser } from '../redux/userSlice';
+import { useGetSubsQuery } from '../redux/api';
 
 const Navbar = () => {
+  const user = useSelector(selectUser);
+
+  const { data: subs } = useGetSubsQuery();
+
   const [name, setName] = useState('');
   const [submissions, setSubmissions] = useState<Sub[]>([]);
-  const { authenticated, subs } = useContextState();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -16,7 +19,7 @@ const Navbar = () => {
   const logout = () => {
     auth
       .signOut()
-      .then(() => dispatch('LOGOUT'))
+      .then(() => dispatch(logOut()))
       .catch((err) => console.log(err));
     navigate('/');
   };
@@ -73,7 +76,7 @@ const Navbar = () => {
         </div>
       </div>
       <div className='flex'>
-        {authenticated ? (
+        {user ? (
           <button
             className='hidden sm:block lg:w-32 w-20 py-1 mr-4 leading-5 hollow blue button focus:outline-none'
             onClick={logout}

@@ -1,15 +1,14 @@
 import { FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { User } from '../types';
 
-type CommentFormProps = {
+type Props = {
   newComment: string;
   setNewComment: (value: string) => void;
   submitComment: (e: FormEvent<HTMLFormElement>) => void;
   user: User;
 };
 
-const CommentForm = ({ newComment, setNewComment, submitComment, user }: CommentFormProps) => {
+const CommentForm = ({ newComment, setNewComment, submitComment, user }: Props) => {
   return (
     <div>
       <p className='mb-1 text-xs'>

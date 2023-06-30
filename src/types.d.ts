@@ -1,4 +1,4 @@
-export interface Post {
+type Post = {
   id: string;
   title: string;
   body: string;
@@ -8,9 +8,9 @@ export interface Post {
   createdAt: { seconds: number };
   voteScore: number;
   commentCount: number;
-}
+};
 
-export interface User {
+type User = {
   id: string;
   displayName: string;
   avatar: string;
@@ -19,9 +19,9 @@ export interface User {
   email: string;
   username: string;
   uid: string;
-}
+} | null;
 
-export interface Sub {
+type Sub = {
   id: string;
   createdAt: { seconds: number };
   name: string;
@@ -31,22 +31,11 @@ export interface Sub {
   banner: string;
   username: string;
   postCount: number;
-}
+};
 
-export interface Comment {
-  id: string;
-  body: string;
-  username: string;
-  createdAt: { seconds: number };
-  postId: string;
-  postTitle: string;
-  voteScore: number;
-  subName: string;
-}
-
-export interface Vote {
+type Vote = {
   uid: string;
   type: string;
   postId: string;
   commentId: string;
-}
+};

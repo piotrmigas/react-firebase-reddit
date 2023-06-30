@@ -6,26 +6,24 @@ import { slugify } from '../slugify';
 import ActionBtn from './Buttons/ActionBtn';
 import UpvoteBtn from './Buttons/UpvoteBtn';
 import DownvoteBtn from './Buttons/DownvoteBtn';
-import { Post } from '../types';
-import { useContextState } from '../context';
 
 dayjs.extend(relativeTime);
 
-type PostCardProps = {
+type Props = {
   post: Post;
+  user: User;
 };
 
-const PostCard = ({ post }: PostCardProps) => {
+const PostCard = ({ post, user }: Props) => {
   const location = useLocation();
   const isInSubPage = location.pathname === `/r/${post.subName}`;
-  const { authenticated } = useContextState();
 
   return (
     <div className='flex mb-4 bg-white rounded'>
       <div className='w-10 py-3 text-center bg-gray-200 rounded-l'>
-        <UpvoteBtn postId={post.id} />
+        <UpvoteBtn postId={post.id} user={user} />
         <p className='text-xs font-bold'>{post.voteScore}</p>
-        <DownvoteBtn postId={post.id} />
+        <DownvoteBtn postId={post.id} user={user} />
       </div>
       <div className='w-full p-2'>
         <div className='flex items-center'>
@@ -42,7 +40,7 @@ const PostCard = ({ post }: PostCardProps) => {
           )}
           <p className='text-xs text-gray-500'>
             Posted by
-            <Link to={authenticated ? `/u/${post.username}` : '/login'} className='mx-1 hover:underline'>
+            <Link to={user ? `/u/${post.username}` : '/login'} className='mx-1 hover:underline'>
               /u/{post.username}
             </Link>
             {dayjs(post.createdAt.seconds * 1000).fromNow()}
@@ -51,11 +49,17 @@ const PostCard = ({ post }: PostCardProps) => {
         <div className='w-11/12'>
           <Link
             to={`/r/${post.subName}/${post.id}/${slugify(post.title)}`}
-            className='my-1 text-lg font-medium break-words'
+            className='my-1 text-lg font-medium break-all'
           >
             {post.title}
           </Link>
-          {post.body && <p className='my-1 text-sm'>{post.body}</p>}
+          {post.body && post.body.includes('https') ? (
+            <a href={post.body} className='text-blue-500'>
+              {post.body}
+            </a>
+          ) : (
+            <p className='my-1 text-sm'>{post.body}</p>
+          )}
         </div>
         <div className='flex'>
           <Link to={`/r/${post.subName}/${post.id}/${slugify(post.title)}`}>
