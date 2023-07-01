@@ -35,7 +35,7 @@ type Sub = {
 
 type Vote = {
   uid: string;
-  type: string;
-  postId: string;
-  commentId: string;
+  postId?: string;
+  commentId?: string;
+  isUpVote: boolean;
 };

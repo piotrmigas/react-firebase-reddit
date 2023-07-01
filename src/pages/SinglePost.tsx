@@ -4,8 +4,6 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Sidebar from '../components/Sidebar';
 import ActionBtn from '../components/Buttons/ActionBtn';
-import UpvoteBtn from '../components/Buttons/UpvoteBtn';
-import DownvoteBtn from '../components/Buttons/DownvoteBtn';
 import { slugify } from '../slugify';
 import { db } from '../firebase';
 import Comments from '../components/Comments';
@@ -14,6 +12,7 @@ import { increment, addDoc, collection, updateDoc, doc } from 'firebase/firestor
 import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/userSlice';
 import { useGetPostsQuery, useGetSubsQuery, useGetCommentsQuery } from '../redux/api';
+import Voting from '../components/Voting';
 
 dayjs.extend(relativeTime);
 
@@ -25,7 +24,6 @@ const SinglePost = () => {
   const { data: comments } = useGetCommentsQuery();
   const user = useSelector(selectUser);
   const [newComment, setNewComment] = useState('');
-
   const sub = subs?.find((i) => i.name === subname);
   const post = posts?.find((post) => slugify(post.title) === postname);
   const postComments = comments?.filter((i) => i.postId === post.id) || [];
@@ -67,11 +65,7 @@ const SinglePost = () => {
           <div className='w-160'>
             <div className='bg-white rounded'>
               <div className='flex'>
-                <div className='w-10 flex-shrink-0 py-2 text-center rounded-l'>
-                  <UpvoteBtn postId={post.id} user={user} />
-                  <p className='text-xs font-bold'>{post.voteScore}</p>
-                  <DownvoteBtn postId={post.id} user={user} />
-                </div>
+                <Voting user={user} postId={post.id} />
                 <div className='py-2 pr-2'>
                   <div className='flex items-center'>
                     <p className='text-xs text-gray-500'>

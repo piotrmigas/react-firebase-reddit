@@ -1,6 +1,6 @@
 import { db } from '../firebase';
 import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
-import { query, collection, orderBy, getDocs } from 'firebase/firestore';
+import { query, collection, orderBy, getDocs, where, onSnapshot } from 'firebase/firestore';
 
 export type Comment = {
   id: string;
@@ -85,24 +85,44 @@ export const api = createApi({
       },
       providesTags: ['Comment'],
     }),
-    getVotes: builder.query<Vote[], void>({
+    getVotesByPostId: builder.query<any, string>({
       async queryFn() {
+        return {
+          data: null,
+        };
+      },
+      async onCacheEntryAdded(postId, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
+        let unsubscribe = () => {};
         try {
-          const votesQuery = collection(db, 'votes');
-          const querySnaphot = await getDocs(votesQuery);
-          let votes = [];
-          querySnaphot?.forEach((doc) => {
-            votes.push({ id: doc.id, ...doc.data() });
+          await cacheDataLoaded;
+          const votesQuery = query(
+            collection(db, 'votes'),
+            where('postId', '==', postId),
+            orderBy('timestamp', 'desc')
+          );
+          unsubscribe = onSnapshot(votesQuery, (snapshot) => {
+            updateCachedData(() => {
+              return snapshot?.docs?.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              }));
+            });
           });
-
-          return { data: votes };
         } catch (error) {
-          return { error };
+          console.log(error);
         }
+        await cacheEntryRemoved;
+        unsubscribe();
       },
       providesTags: ['Vote'],
     }),
   }),
 });
 
-export const { useGetPostsQuery, useGetSubsQuery, useGetUsersQuery, useGetCommentsQuery, useGetVotesQuery } = api;
+export const {
+  useGetPostsQuery,
+  useGetSubsQuery,
+  useGetUsersQuery,
+  useGetCommentsQuery,
+  useLazyGetVotesByPostIdQuery,
+} = api;

@@ -4,8 +4,7 @@ import { useLocation } from 'react-router-dom';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { slugify } from '../slugify';
 import ActionBtn from './Buttons/ActionBtn';
-import UpvoteBtn from './Buttons/UpvoteBtn';
-import DownvoteBtn from './Buttons/DownvoteBtn';
+import Voting from './Voting';
 
 dayjs.extend(relativeTime);
 
@@ -20,11 +19,7 @@ const PostCard = ({ post, user }: Props) => {
 
   return (
     <div className='flex mb-4 bg-white rounded'>
-      <div className='w-10 py-3 text-center bg-gray-200 rounded-l'>
-        <UpvoteBtn postId={post.id} user={user} />
-        <p className='text-xs font-bold'>{post.voteScore}</p>
-        <DownvoteBtn postId={post.id} user={user} />
-      </div>
+      <Voting user={user} postId={post.id} />
       <div className='w-full p-2'>
         <div className='flex items-center'>
           {!isInSubPage && (
