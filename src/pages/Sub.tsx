@@ -67,7 +67,7 @@ const Sub = () => {
     postsMarkup = <p className='text-lg text-center'>No posts submitted yet</p>;
   } else {
     postsMarkup = subPosts
-      .sort((a: { voteScore: number }, b: { voteScore: number }) => b.voteScore - a.voteScore)
+      //.sort((a: { voteScore: number }, b: { voteScore: number }) => b.voteScore - a.voteScore)
       .map((post: Post) => <PostCard key={post.id} post={post} user={user} />);
   }
 

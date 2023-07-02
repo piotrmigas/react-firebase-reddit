@@ -6,7 +6,6 @@ type Post = {
   avatar: string;
   username: string;
   createdAt: { seconds: number };
-  voteScore: number;
   commentCount: number;
 };
 

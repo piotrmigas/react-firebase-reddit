@@ -9,7 +9,6 @@ export type Comment = {
   createdAt: { seconds: number };
   postId: string;
   postTitle: string;
-  voteScore: number;
   subName: string;
 };
 
