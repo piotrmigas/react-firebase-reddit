@@ -19,7 +19,7 @@ export default function Voting({ postId, commentId, user }: Props) {
     if (postId) getVotesByPostId(postId);
   }, [postId]);
 
-  const hasUserVoted = data?.find((vote: Vote) => vote.uid === user.uid)?.isUpVote;
+  const hasUserVoted = data?.find((vote: Vote) => vote.uid === user?.uid)?.isUpVote;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,9 +31,12 @@ export default function Voting({ postId, commentId, user }: Props) {
     if (vote && isUpVote) return;
     if (vote === false && !isUpVote) return;
 
-    addDoc(collection(db, 'votes'), { postId, uid: user?.uid, isUpVote, timestamp: serverTimestamp() });
-    //updateDoc(doc(db, 'posts', postId), { voteScore: increment(isUpVote ? 1 : -1) });
-    //   updateDoc(doc(db, 'comments', commentId), { voteScore: increment(isUpVote ? 1 : -1) });
+    addDoc(collection(db, 'votes'), {
+      postId,
+      uid: user?.uid,
+      isUpVote,
+      timestamp: serverTimestamp(),
+    });
   };
 
   const displayVotes = () => {

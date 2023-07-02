@@ -16,7 +16,7 @@ const Comments = ({ postComments, user }: Props) => (
     {postComments.map(({ id, username, voteScore, createdAt, body }) => (
       <div className='flex' key={id}>
         <div className='flex-shrink-0 w-10 py-2 text-center rounded-l'>
-          <Voting commentId={id} user={user} />
+          {/* <Voting commentId={id} user={user} /> */}
         </div>
         <div className='py-2 pr-2'>
           <p className='mb-1 text-xs leading-none'>
