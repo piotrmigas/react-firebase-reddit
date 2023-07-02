@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, JSXElementConstructor, ReactNode, useEffect, useState } from 'react';
 import { v4 } from 'uuid';
 import { useParams } from 'react-router-dom';
 import PostCard from '../components/PostCard';
@@ -10,6 +10,7 @@ import Modal from '../components/Modal';
 import { updateDoc, doc, query, where, collection, getDocs } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useGetPostsQuery, useGetSubsQuery } from '../redux/api';
+import { JSX } from 'react/jsx-runtime';
 
 const Sub = () => {
   const { subname } = useParams<{ subname: string }>();
@@ -59,15 +60,15 @@ const Sub = () => {
     }
   };
 
-  let postsMarkup;
+  let postsMarkup: JSX.Element | Iterable<ReactNode>;
   if (!sub) {
     postsMarkup = <p className='text-lg text-center'>Loading..</p>;
   } else if (subPosts.length === 0) {
     postsMarkup = <p className='text-lg text-center'>No posts submitted yet</p>;
   } else {
     postsMarkup = subPosts
-      .sort((a, b) => b.voteScore - a.voteScore)
-      .map((post) => <PostCard key={post.id} post={post} user={user} />);
+      .sort((a: { voteScore: number }, b: { voteScore: number }) => b.voteScore - a.voteScore)
+      .map((post: Post) => <PostCard key={post.id} post={post} user={user} />);
   }
 
   const handleClick = (type: string) => {

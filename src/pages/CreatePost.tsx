@@ -17,18 +17,17 @@ const CreatePost = () => {
   const navigate = useNavigate();
   const { subname } = useParams<{ subname: string }>();
 
-  const sub = subs.find((i) => i.name === subname);
+  const sub = subs.find((i: Sub) => i.name === subname);
 
   const submitPost = (e: FormEvent) => {
     e.preventDefault();
     if (title.trim() === '') return;
-    if (posts.find((post) => post.title === title)) alert('Please choose different post name.');
+    if (posts.find((post: Post) => post.title === title)) alert('Please choose different post name.');
     else {
       addDoc(collection(db, 'posts'), {
         title,
         commentCount: 0,
         body,
-        voteScore: 0,
         subName: sub?.name,
         username: user?.displayName,
         createdAt: new Date(),

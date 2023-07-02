@@ -24,7 +24,7 @@ const CreateSub = () => {
   const navigate = useNavigate();
 
   const submitForm: SubmitHandler<FormValues> = ({ title, description, name }) => {
-    if (subs.find((sub) => sub.name === name)) alert('Sub already exists. Please choose another name.');
+    if (subs.find((sub: Sub) => sub.name === name)) alert('Sub already exists. Please choose another name.');
     else {
       addDoc(collection(db, 'subs'), {
         title,

@@ -19,7 +19,7 @@ type User = {
   email: string;
   username: string;
   uid: string;
-} | null;
+};
 
 type Sub = {
   id: string;
@@ -35,7 +35,7 @@ type Sub = {
 
 type Vote = {
   uid: string;
-  postId?: string;
-  commentId?: string;
+  postId: string;
+  createdAt: { seconds: number };
   isUpVote: boolean;
 };

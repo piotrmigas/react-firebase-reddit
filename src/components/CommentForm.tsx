@@ -1,14 +1,34 @@
-import { FormEvent } from 'react';
+import { FormEvent, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { increment, addDoc, collection, updateDoc, doc } from 'firebase/firestore';
+import { db } from '../firebase';
 
 type Props = {
-  newComment: string;
-  setNewComment: (value: string) => void;
-  submitComment: (e: FormEvent<HTMLFormElement>) => void;
+  post: Post;
   user: User;
+  subName: string;
 };
 
-const CommentForm = ({ newComment, setNewComment, submitComment, user }: Props) => {
+const CommentForm = ({ user, post, subName }: Props) => {
+  const [newComment, setNewComment] = useState('');
+
+  const submitComment = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (newComment.trim() === '') return;
+
+    addDoc(collection(db, 'comments'), {
+      postId: post?.id,
+      body: newComment,
+      username: user?.displayName,
+      createdAt: new Date(),
+      subName,
+      postTitle: post?.title,
+    });
+
+    if (post?.id) updateDoc(doc(db, 'posts', post.id), { commentCount: increment(1) });
+    setNewComment('');
+  };
+
   return (
     <div>
       <p className='mb-1 text-xs'>

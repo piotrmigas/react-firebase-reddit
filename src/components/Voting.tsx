@@ -5,24 +5,23 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 
 type Props = {
-  postId?: string;
-  commentId?: string;
+  postId: string;
   user: User;
 };
 
-export default function Voting({ postId, commentId, user }: Props) {
+export default function Voting({ postId, user }: Props) {
   const [vote, setVote] = useState<boolean>();
 
   const [getVotesByPostId, { data }] = useLazyGetVotesByPostIdQuery();
 
   useEffect(() => {
     if (postId) getVotesByPostId(postId);
-  }, [postId]);
+  }, []);
 
-  const hasUserVoted = data?.find((vote: Vote) => vote.uid === user?.uid)?.isUpVote;
   const navigate = useNavigate();
 
   useEffect(() => {
+    const hasUserVoted = data?.find((vote: Vote) => vote.uid === user?.uid)?.isUpVote;
     setVote(hasUserVoted);
   }, [data]);
 
@@ -35,7 +34,7 @@ export default function Voting({ postId, commentId, user }: Props) {
       postId,
       uid: user?.uid,
       isUpVote,
-      timestamp: serverTimestamp(),
+      createdAt: serverTimestamp(),
     });
   };
 

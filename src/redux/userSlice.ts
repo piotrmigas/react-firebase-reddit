@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type { RootState } from './store';
 
 type InitialState = {
-  user: User;
+  user: User | null;
 };
 
 const initialState: InitialState = {

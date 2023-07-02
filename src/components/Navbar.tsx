@@ -29,7 +29,7 @@ const Navbar = () => {
       setSubmissions([]);
       return;
     }
-    const filtered = subs.filter((sub) => sub.name.toLowerCase().includes(name.toLowerCase()));
+    const filtered = subs.filter((sub: Sub) => sub.name.toLowerCase().includes(name.toLowerCase()));
     setSubmissions(filtered);
   }, [name, subs]);
 

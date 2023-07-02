@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import { useLocation } from 'react-router-dom';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { slugify } from '../slugify';
-import ActionBtn from './Buttons/ActionBtn';
+import ActionBtn from './ActionBtn';
 import Voting from './Voting';
 
 dayjs.extend(relativeTime);

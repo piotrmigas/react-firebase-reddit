@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useForm, Controller, SubmitHandler } from 'react-hook-form';
 import { auth, db } from '../firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/userSlice';
@@ -35,8 +35,8 @@ const Register = () => {
     if (users.find((user) => user.username === username)) alert('Username already taken. Please choose another one.');
     else {
       createUserWithEmailAndPassword(auth, email, password)
-        .then(({ user }: any) => {
-          user.updateProfile({
+        .then(({ user }) => {
+          updateProfile(user, {
             displayName: username,
           });
           setDoc(doc(db, 'users', user.uid), {

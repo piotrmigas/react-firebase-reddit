@@ -1,7 +1,6 @@
-import { ChangeEvent } from 'react';
+import { ChangeEvent, useState, useEffect, MouseEvent } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import { useState, useEffect, MouseEvent } from 'react';
 import PostCard from '../components/PostCard';
 import { Link, useParams } from 'react-router-dom';
 import Modal from '../components/Modal';
@@ -12,7 +11,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, updateDoc } from 'firebase/firestore';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/userSlice';
-import { useGetUsersQuery, useGetPostsQuery, useGetCommentsQuery } from '../redux/api';
+import { useGetUsersQuery, useLazyGetUserPostsQuery, useLazyGetUserCommentsQuery } from '../redux/api';
 
 dayjs.extend(relativeTime);
 
@@ -20,18 +19,19 @@ const UserProfile = () => {
   const { username } = useParams<{ username: string }>();
   const user = useSelector(selectUser);
   const { data: users } = useGetUsersQuery();
-  const { data: posts } = useGetPostsQuery();
-  const { data: comments } = useGetCommentsQuery();
+  const [getUserCommentsQuery, { data: userComments }] = useLazyGetUserCommentsQuery();
+  const [getUserPostsQuery, { data: userPosts }] = useLazyGetUserPostsQuery();
+  const userProfile = users?.find((i: User) => i.username === username);
+
+  useEffect(() => {
+    if (user?.id) getUserCommentsQuery(user.id);
+    if (userProfile?.username) getUserPostsQuery(userProfile.username);
+  }, [user?.id, userProfile?.username]);
 
   const [modal, setModal] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [imageType, setImageType] = useState('');
   const [owner, setOwner] = useState(false);
-
-  const userProfile = users?.find((i) => i.username === username) as User;
-  const userPosts = posts.filter((i) => i.username === userProfile.username);
-  const userComments = comments.filter((i) => i.username === userProfile.username);
-  const submissions: any = [...userPosts, ...userComments];
 
   const handleUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const files = (e.target as HTMLInputElement).files;
@@ -40,8 +40,8 @@ const UserProfile = () => {
 
   useEffect(() => {
     if (!user) return;
-    if (user.displayName === userProfile.username) setOwner(true);
-  }, [user, userProfile.username]);
+    if (user.displayName === userProfile?.username) setOwner(true);
+  }, [user, userProfile?.username]);
 
   const uploadImage = async () => {
     if (file) {
@@ -79,41 +79,35 @@ const UserProfile = () => {
         <div className='container flex pt-5'>
           <div className='w-160'>
             <h1 className='text-lg font-semibold pb-3'>Recent activity</h1>
-            {submissions
-              .sort((a: any, b: any) => b.createdAt - a.createdAt)
-              .map((submission) => {
-                if (submission.hasOwnProperty('postId')) {
-                  return (
-                    <div className='flex my-4 bg-white rounded' key={submission.id}>
-                      <div className='bg-gray-200 flex-shrink-0 w-10 py-4 text-center rounded-l'>
-                        <i className='fas fa-comment-alt fa-xs text-gray-500' />
-                      </div>
-                      <div className='w-full p-2'>
-                        <p className='mb-2 text-xs text-gray-500'>
-                          {userProfile?.username}
-                          <span> commented on </span>
-                          <Link
-                            to={`/r/${submission.subName}/${submission.postId}/${slugify(submission.postTitle)}`}
-                            className='font-semibold hover:underline'
-                          >
-                            {submission.postTitle}
-                          </Link>{' '}
-                          {dayjs(submission.createdAt.seconds * 1000).fromNow()}
-                          <span className='mx-1'>•</span>
-                          <Link to={`/r/${submission.subName}`} className='hover:underline'>
-                            /r/{submission.subName}
-                          </Link>
-                        </p>
-                        <hr />
-                        <p>{submission.body}</p>
-                      </div>
-                    </div>
-                  );
-                } else {
-                  const post = submission;
-                  return <PostCard key={post.id} post={post} user={user} />;
-                }
-              })}
+            {userComments?.map(({ id, subName, postTitle, postId, createdAt, body }) => (
+              <div className='flex my-4 bg-white rounded' key={id}>
+                <div className='bg-gray-200 flex-shrink-0 w-10 py-4 text-center rounded-l'>
+                  <i className='fas fa-comment-alt fa-xs text-gray-500' />
+                </div>
+                <div className='w-full p-2'>
+                  <p className='mb-2 text-xs text-gray-500'>
+                    {userProfile?.username}
+                    <span> commented on </span>
+                    <Link
+                      to={`/r/${subName}/${postId}/${slugify(postTitle)}`}
+                      className='font-semibold hover:underline'
+                    >
+                      {postTitle}
+                    </Link>{' '}
+                    {dayjs(createdAt.seconds * 1000).fromNow()}
+                    <span className='mx-1'>•</span>
+                    <Link to={`/r/${subName}`} className='hover:underline'>
+                      /r/{subName}
+                    </Link>
+                  </p>
+                  <hr />
+                  <p>{body}</p>
+                </div>
+              </div>
+            ))}
+            {userPosts?.map((post: Post) => (
+              <PostCard key={post.id} post={post} user={user} />
+            ))}
           </div>
           <div className='w-80 ml-6'>
             <div className='bg-white rounded'>
