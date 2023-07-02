@@ -25,8 +25,8 @@ const SinglePost = () => {
   const { data: comments } = useGetCommentsQuery();
   const user = useSelector(selectUser);
   const [newComment, setNewComment] = useState('');
-  const sub = subs?.find((i) => i.name === subname);
-  const post = posts?.find((post) => slugify(post.title) === postname);
+  const sub = subs?.find((i: Sub) => i.name === subname);
+  const post = posts?.find((post: Post) => slugify(post.title) === postname);
   const postComments = comments?.filter((i: Comment) => i.postId === post.id) || [];
 
   const submitComment = (e: FormEvent<HTMLFormElement>) => {
