@@ -17,37 +17,57 @@ export const api = createApi({
   tagTypes: ['Post', 'Sub', 'Comment', 'Vote', 'User'],
   baseQuery: fakeBaseQuery(),
   endpoints: (builder) => ({
-    getPosts: builder.query<Post[], void>({
+    getPosts: builder.query<any, void>({
       async queryFn() {
+        return {
+          data: null,
+        };
+      },
+      async onCacheEntryAdded(_, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
+        let unsubscribe = () => {};
         try {
-          const postsQuery = query(collection(db, 'posts'), orderBy('voteScore', 'desc'));
-          const querySnaphot = await getDocs(postsQuery);
-          let posts = [];
-          querySnaphot?.forEach((doc) => {
-            posts.push({ id: doc.id, ...doc.data() });
-          });
+          await cacheDataLoaded;
 
-          return { data: posts };
+          unsubscribe = onSnapshot(collection(db, 'posts'), (snapshot) => {
+            updateCachedData(() => {
+              return snapshot?.docs?.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              }));
+            });
+          });
         } catch (error) {
-          return { error };
+          console.log(error);
         }
+        await cacheEntryRemoved;
+        unsubscribe();
       },
       providesTags: ['Post'],
     }),
-    getSubs: builder.query<Sub[], void>({
+    getSubs: builder.query<any, void>({
       async queryFn() {
+        return {
+          data: null,
+        };
+      },
+      async onCacheEntryAdded(_, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
+        let unsubscribe = () => {};
         try {
-          const subsQuery = query(collection(db, 'subs'), orderBy('postCount', 'desc'));
-          const querySnaphot = await getDocs(subsQuery);
-          let subs = [];
-          querySnaphot?.forEach((doc) => {
-            subs.push({ id: doc.id, ...doc.data() });
-          });
+          await cacheDataLoaded;
 
-          return { data: subs };
+          unsubscribe = onSnapshot(query(collection(db, 'subs'), orderBy('postCount', 'desc')), (snapshot) => {
+            updateCachedData(() => {
+              return snapshot?.docs?.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              }));
+            });
+          });
         } catch (error) {
-          return { error };
+          console.log(error);
         }
+        await cacheEntryRemoved;
+        unsubscribe();
       },
       providesTags: ['Sub'],
     }),
@@ -68,20 +88,30 @@ export const api = createApi({
       },
       providesTags: ['User'],
     }),
-    getComments: builder.query<Comment[], void>({
+    getComments: builder.query<any, void>({
       async queryFn() {
+        return {
+          data: null,
+        };
+      },
+      async onCacheEntryAdded(_, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
+        let unsubscribe = () => {};
         try {
-          const commentsQuery = query(collection(db, 'comments'), orderBy('voteScore', 'desc'));
-          const querySnaphot = await getDocs(commentsQuery);
-          let comments = [];
-          querySnaphot?.forEach((doc) => {
-            comments.push({ id: doc.id, ...doc.data() });
-          });
+          await cacheDataLoaded;
 
-          return { data: comments };
+          unsubscribe = onSnapshot(query(collection(db, 'comments')), (snapshot) => {
+            updateCachedData(() => {
+              return snapshot?.docs?.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              }));
+            });
+          });
         } catch (error) {
-          return { error };
+          console.log(error);
         }
+        await cacheEntryRemoved;
+        unsubscribe();
       },
       providesTags: ['Comment'],
     }),
