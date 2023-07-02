@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLazyGetVotesByPostIdQuery } from '../redux/api';
 import { useNavigate } from 'react-router-dom';
-import { addDoc, collection, serverTimestamp, doc, increment, updateDoc } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 
 type Props = {

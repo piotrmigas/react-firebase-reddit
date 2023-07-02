@@ -13,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/userSlice';
 import { useGetPostsQuery, useGetSubsQuery, useGetCommentsQuery } from '../redux/api';
 import Voting from '../components/Voting';
+import { Comment } from '../redux/api';
 
 dayjs.extend(relativeTime);
 
@@ -26,7 +27,7 @@ const SinglePost = () => {
   const [newComment, setNewComment] = useState('');
   const sub = subs?.find((i) => i.name === subname);
   const post = posts?.find((post) => slugify(post.title) === postname);
-  const postComments = comments?.filter((i) => i.postId === post.id) || [];
+  const postComments = comments?.filter((i: Comment) => i.postId === post.id) || [];
 
   const submitComment = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
