@@ -70,7 +70,7 @@ const SinglePost = () => {
               </div>
               <hr />
               {postComments?.map((comment: CommentType) => (
-                <Comment key={comment.id} {...comment} />
+                <Comment key={comment.id} comment={comment} user={user} />
               ))}
             </div>
           </div>

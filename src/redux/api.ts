@@ -13,7 +13,7 @@ export type Comment = {
 };
 
 export const api = createApi({
-  tagTypes: ['Post', 'Sub', 'Comment', 'Vote', 'User'],
+  tagTypes: ['Post', 'Sub', 'Comment', 'PostVote', 'CommentVote', 'User'],
   baseQuery: fakeBaseQuery(),
   endpoints: (builder) => ({
     getPosts: builder.query<any, void>({
@@ -206,7 +206,38 @@ export const api = createApi({
         await cacheEntryRemoved;
         unsubscribe();
       },
-      providesTags: ['Vote'],
+      providesTags: ['PostVote'],
+    }),
+    getVotesByCommentId: builder.query<any, string>({
+      async queryFn() {
+        return {
+          data: null,
+        };
+      },
+      async onCacheEntryAdded(commentId, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
+        let unsubscribe = () => {};
+        try {
+          await cacheDataLoaded;
+          const votesQuery = query(
+            collection(db, 'votes'),
+            where('commentId', '==', commentId),
+            orderBy('createdAt', 'desc')
+          );
+          unsubscribe = onSnapshot(votesQuery, (snapshot) => {
+            updateCachedData(() => {
+              return snapshot?.docs?.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              }));
+            });
+          });
+        } catch (error) {
+          console.log(error);
+        }
+        await cacheEntryRemoved;
+        unsubscribe();
+      },
+      providesTags: ['CommentVote'],
     }),
   }),
 });
@@ -219,4 +250,5 @@ export const {
   useLazyGetUserCommentsQuery,
   useGetVotesByPostIdQuery,
   useLazyGetUserPostsQuery,
+  useGetVotesByCommentIdQuery,
 } = api;

@@ -1,24 +1,28 @@
 import { useState, useEffect } from 'react';
-import { useGetVotesByPostIdQuery } from '../redux/api';
+import { useGetVotesByPostIdQuery, useGetVotesByCommentIdQuery } from '../redux/api';
 import { useNavigate } from 'react-router-dom';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
 
 type Props = {
-  postId: string;
+  postId?: string;
+  commentId?: string;
   user: User;
 };
 
-export default function Voting({ postId, user }: Props) {
+export default function Voting({ postId, user, commentId }: Props) {
   const [vote, setVote] = useState<boolean>();
-  const { data } = useGetVotesByPostIdQuery(postId);
+  const { data: votesByPostId } = useGetVotesByPostIdQuery(postId);
+  const { data: votesByCommentId } = useGetVotesByCommentIdQuery(commentId);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const hasUserVoted = data?.find((vote: Vote) => vote.uid === user?.uid)?.isUpVote;
+    const hasUserVoted = (postId ? votesByPostId : votesByCommentId)?.find(
+      (vote: Vote) => vote.uid === user?.uid
+    )?.isUpVote;
     setVote(hasUserVoted);
-  }, [data, user?.uid]);
+  }, [votesByPostId, votesByCommentId, user?.uid, postId]);
 
   const upVote = (isUpVote: boolean) => {
     if (!user) navigate('/login');
@@ -26,7 +30,8 @@ export default function Voting({ postId, user }: Props) {
     if (vote === false && !isUpVote) return;
 
     addDoc(collection(db, 'votes'), {
-      postId,
+      ...(postId && { postId }),
+      ...(commentId && { commentId }),
       uid: user?.uid,
       isUpVote,
       createdAt: serverTimestamp(),
@@ -34,11 +39,14 @@ export default function Voting({ postId, user }: Props) {
   };
 
   const displayVotes = () => {
-    const displayNumber = data?.reduce((total: number, vote: Vote) => (vote.isUpVote ? (total += 1) : (total -= 1)), 0);
+    const displayNumber = (postId ? votesByPostId : votesByCommentId)?.reduce(
+      (total: number, vote: Vote) => (vote.isUpVote ? (total += 1) : (total -= 1)),
+      0
+    );
 
-    if (data?.length === 0) return 0;
+    if ((postId ? votesByPostId : votesByCommentId)?.length === 0) return 0;
     if (displayNumber === 0) {
-      return data[0]?.isUpVote ? 1 : -1;
+      return (postId ? votesByPostId : votesByCommentId)[0]?.isUpVote ? 1 : -1;
     }
 
     return displayNumber;
