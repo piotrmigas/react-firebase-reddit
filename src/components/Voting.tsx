@@ -16,14 +16,14 @@ export default function Voting({ postId, user }: Props) {
 
   useEffect(() => {
     if (postId) getVotesByPostId(postId);
-  }, []);
+  }, [postId, getVotesByPostId]);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const hasUserVoted = data?.find((vote: Vote) => vote.uid === user?.uid)?.isUpVote;
     setVote(hasUserVoted);
-  }, [data]);
+  }, [data, user?.uid]);
 
   const upVote = (isUpVote: boolean) => {
     if (!user) navigate('/login');
@@ -40,6 +40,7 @@ export default function Voting({ postId, user }: Props) {
 
   const displayVotes = () => {
     const displayNumber = data?.reduce((total: number, vote: Vote) => (vote.isUpVote ? (total += 1) : (total -= 1)), 0);
+
     if (data?.length === 0) return 0;
     if (displayNumber === 0) {
       return data[0]?.isUpVote ? 1 : -1;

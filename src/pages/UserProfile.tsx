@@ -26,7 +26,7 @@ const UserProfile = () => {
   useEffect(() => {
     if (user?.id) getUserCommentsQuery(user.id);
     if (userProfile?.username) getUserPostsQuery(userProfile.username);
-  }, [user?.id, userProfile?.username]);
+  }, [user?.id, userProfile?.username, getUserCommentsQuery, getUserPostsQuery]);
 
   const [modal, setModal] = useState(false);
   const [file, setFile] = useState<File | null>(null);

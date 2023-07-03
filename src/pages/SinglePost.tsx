@@ -30,7 +30,7 @@ const SinglePost = () => {
 
   useEffect(() => {
     if (post?.id) getCommentsByPostId(post.id);
-  }, [post?.id]);
+  }, [post?.id, getCommentsByPostId]);
 
   return (
     <>

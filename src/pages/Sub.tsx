@@ -1,4 +1,4 @@
-import { ChangeEvent, JSXElementConstructor, ReactNode, useEffect, useState } from 'react';
+import { ChangeEvent, ReactNode, useEffect, useState } from 'react';
 import { v4 } from 'uuid';
 import { useParams } from 'react-router-dom';
 import PostCard from '../components/PostCard';

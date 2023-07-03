@@ -29,7 +29,7 @@ const Register = () => {
 
   useEffect(() => {
     if (user) navigate('/');
-  }, [user, history]);
+  }, [user, navigate]);
 
   const submitForm: SubmitHandler<FormValues> = ({ email, username, password }) => {
     if (users.find((user) => user.username === username)) alert('Username already taken. Please choose another one.');

@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import PostCard from '../components/PostCard';
