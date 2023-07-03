@@ -3,7 +3,6 @@ import { Link, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import Sidebar from '../components/Sidebar';
-import ActionBtn from '../components/ActionBtn';
 import { slugify } from '../slugify';
 import Comment from '../components/Comment';
 import CommentForm from '../components/CommentForm';
@@ -15,7 +14,7 @@ import {
   useGetSubsQuery,
   useLazyGetCommentsByPostIdQuery,
 } from '../redux/api';
-import Voting from '../components/Voting';
+import PostCard from '../components/PostCard';
 
 dayjs.extend(relativeTime);
 
@@ -51,42 +50,7 @@ const SinglePost = () => {
         {post && (
           <div className='w-160'>
             <div className='bg-white rounded'>
-              <div className='flex'>
-                <Voting user={user} postId={post.id} />
-                <div className='py-2 pr-2'>
-                  <div className='flex items-center'>
-                    <p className='text-xs text-gray-500'>
-                      Posted by
-                      <Link to={user ? `/u/${post.username}` : '/login'} className='mx-1 hover:underline'>
-                        /u/{post.username}
-                      </Link>
-                      {dayjs(post.createdAt.seconds * 1000).fromNow()}
-                    </p>
-                  </div>
-                  <h1 className='my-1 text-xl font-medium break-all'>{post.title}</h1>
-                  {post.body.includes('https') ? (
-                    <a href={post.body} className='text-blue-500'>
-                      {post.body}
-                    </a>
-                  ) : (
-                    <p className='my-3 text-sm'>{post.body}</p>
-                  )}
-                  <div className='flex'>
-                    <ActionBtn>
-                      <i className='mr-1 fas fa-comment-alt fa-xs' />
-                      <span className='font-bold'>{post.commentCount} Comments</span>
-                    </ActionBtn>
-                    <ActionBtn>
-                      <i className='mr-1 fas fa-share fa-xs' />
-                      <span className='font-bold'>Share</span>
-                    </ActionBtn>
-                    <ActionBtn>
-                      <i className='mr-1 fas fa-bookmark fa-xs' />
-                      <span className='font-bold'>Save</span>
-                    </ActionBtn>
-                  </div>
-                </div>
-              </div>
+              <PostCard user={user} post={post} />
               <div className='pl-10 pr-6 mb-4'>
                 {user ? (
                   <CommentForm post={post} user={user} subName={sub?.name} />

@@ -15,7 +15,7 @@ type Props = {
 
 const PostCard = ({ post, user }: Props) => {
   const location = useLocation();
-  const isInSubPage = location.pathname === `/r/${post.subName}`;
+  const isInSubPage = location.pathname.includes('/r/');
 
   return (
     <div className='flex mb-4 bg-white rounded'>
