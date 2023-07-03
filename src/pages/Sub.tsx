@@ -66,9 +66,7 @@ const Sub = () => {
   } else if (subPosts.length === 0) {
     postsMarkup = <p className='text-lg text-center'>No posts submitted yet</p>;
   } else {
-    postsMarkup = subPosts
-      //.sort((a: { voteScore: number }, b: { voteScore: number }) => b.voteScore - a.voteScore)
-      .map((post: Post) => <PostCard key={post.id} post={post} user={user} />);
+    postsMarkup = subPosts.map((post: Post) => <PostCard key={post.id} post={post} user={user} />);
   }
 
   const handleClick = (type: string) => {
