@@ -6,7 +6,7 @@ Features:
 
 <ul>
 <li>search subs</li>
-<li>upvote/downvote posts</li>
+<li>upvote/downvote posts and comments</li>
 <li>user page with recent activity</li>
 <li>add subs/posts/comments when authenticated</li>
 <li>change user/sub avatar and banner image</li>

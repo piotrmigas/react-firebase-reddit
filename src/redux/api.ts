@@ -187,19 +187,21 @@ export const api = createApi({
         let unsubscribe = () => {};
         try {
           await cacheDataLoaded;
-          const votesQuery = query(
-            collection(db, 'votes'),
-            where('postId', '==', postId),
-            orderBy('createdAt', 'desc')
-          );
-          unsubscribe = onSnapshot(votesQuery, (snapshot) => {
-            updateCachedData(() => {
-              return snapshot?.docs?.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-              }));
+          if (postId) {
+            const votesQuery = query(
+              collection(db, 'votes'),
+              where('postId', '==', postId),
+              orderBy('createdAt', 'desc')
+            );
+            unsubscribe = onSnapshot(votesQuery, (snapshot) => {
+              updateCachedData(() => {
+                return snapshot?.docs?.map((doc) => ({
+                  id: doc.id,
+                  ...doc.data(),
+                }));
+              });
             });
-          });
+          }
         } catch (error) {
           console.log(error);
         }
@@ -218,19 +220,21 @@ export const api = createApi({
         let unsubscribe = () => {};
         try {
           await cacheDataLoaded;
-          const votesQuery = query(
-            collection(db, 'votes'),
-            where('commentId', '==', commentId),
-            orderBy('createdAt', 'desc')
-          );
-          unsubscribe = onSnapshot(votesQuery, (snapshot) => {
-            updateCachedData(() => {
-              return snapshot?.docs?.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-              }));
+          if (commentId) {
+            const votesQuery = query(
+              collection(db, 'votes'),
+              where('commentId', '==', commentId),
+              orderBy('createdAt', 'desc')
+            );
+            unsubscribe = onSnapshot(votesQuery, (snapshot) => {
+              updateCachedData(() => {
+                return snapshot?.docs?.map((doc) => ({
+                  id: doc.id,
+                  ...doc.data(),
+                }));
+              });
             });
-          });
+          }
         } catch (error) {
           console.log(error);
         }
