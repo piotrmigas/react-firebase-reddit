@@ -33,7 +33,7 @@ const CreatePost = () => {
         createdAt: new Date(),
         avatar: sub?.avatar,
       });
-      if (sub?.id) updateDoc(doc(db, 'subs', sub.id), { postCount: increment(-1) });
+      if (sub?.id) updateDoc(doc(db, 'subs', sub.id), { postCount: increment(1) });
       navigate('/');
     }
   };
