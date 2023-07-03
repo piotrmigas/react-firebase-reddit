@@ -19,7 +19,7 @@ const PostCard = ({ post, user }: Props) => {
 
   return (
     <div className='flex mb-4 bg-white rounded'>
-      <Voting user={user} postId={post.id} />
+      <Voting user={user} postId={post?.id} />
       <div className='w-full p-2'>
         <div className='flex items-center'>
           {!isInSubPage && (

@@ -217,6 +217,6 @@ export const {
   useGetUsersQuery,
   useLazyGetCommentsByPostIdQuery,
   useLazyGetUserCommentsQuery,
-  useLazyGetVotesByPostIdQuery,
+  useGetVotesByPostIdQuery,
   useLazyGetUserPostsQuery,
 } = api;

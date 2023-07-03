@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLazyGetVotesByPostIdQuery } from '../redux/api';
+import { useGetVotesByPostIdQuery } from '../redux/api';
 import { useNavigate } from 'react-router-dom';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -11,12 +11,7 @@ type Props = {
 
 export default function Voting({ postId, user }: Props) {
   const [vote, setVote] = useState<boolean>();
-
-  const [getVotesByPostId, { data }] = useLazyGetVotesByPostIdQuery();
-
-  useEffect(() => {
-    if (postId) getVotesByPostId(postId);
-  }, [postId, getVotesByPostId]);
+  const { data } = useGetVotesByPostIdQuery(postId);
 
   const navigate = useNavigate();
 
