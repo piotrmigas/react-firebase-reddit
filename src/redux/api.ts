@@ -1,6 +1,7 @@
+import { Recipe } from '@reduxjs/toolkit/dist/query/core/buildThunks';
 import { db } from '../firebase';
 import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
-import { query, collection, orderBy, getDocs, where, onSnapshot } from 'firebase/firestore';
+import { query, collection, orderBy, getDocs, where, onSnapshot, SnapshotListenOptions } from 'firebase/firestore';
 
 export type Comment = {
   id: string;
@@ -16,7 +17,7 @@ export const api = createApi({
   tagTypes: ['Post', 'Sub', 'Comment', 'PostVote', 'CommentVote', 'User'],
   baseQuery: fakeBaseQuery(),
   endpoints: (builder) => ({
-    getPosts: builder.query<any, void>({
+    getPosts: builder.query<void, void>({
       async queryFn() {
         return {
           data: null,
@@ -43,7 +44,7 @@ export const api = createApi({
       },
       providesTags: ['Post'],
     }),
-    getSubs: builder.query<any, void>({
+    getSubs: builder.query<void, void>({
       async queryFn() {
         return {
           data: null,
@@ -87,7 +88,7 @@ export const api = createApi({
       },
       providesTags: ['User'],
     }),
-    getCommentsByPostId: builder.query<any, string>({
+    getCommentsByPostId: builder.query<void, string>({
       async queryFn() {
         return {
           data: null,
@@ -117,7 +118,7 @@ export const api = createApi({
       },
       providesTags: ['Comment'],
     }),
-    getUserComments: builder.query<any, string>({
+    getUserComments: builder.query<void, string>({
       async queryFn() {
         return {
           data: null,
@@ -147,7 +148,7 @@ export const api = createApi({
       },
       providesTags: ['Comment'],
     }),
-    getUserPosts: builder.query<any, string>({
+    getUserPosts: builder.query<void, string>({
       async queryFn() {
         return {
           data: null,
@@ -177,7 +178,7 @@ export const api = createApi({
       },
       providesTags: ['Post'],
     }),
-    getVotesByPostId: builder.query<any, string>({
+    getVotesByPostId: builder.query<void, string>({
       async queryFn() {
         return {
           data: null,
@@ -210,7 +211,7 @@ export const api = createApi({
       },
       providesTags: ['PostVote'],
     }),
-    getVotesByCommentId: builder.query<any, string>({
+    getVotesByCommentId: builder.query<void, string>({
       async queryFn() {
         return {
           data: null,

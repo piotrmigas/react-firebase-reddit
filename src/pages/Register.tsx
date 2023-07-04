@@ -32,7 +32,7 @@ const Register = () => {
   }, [user, navigate]);
 
   const submitForm: SubmitHandler<FormValues> = ({ email, username, password }) => {
-    if (users.find((user) => user.username === username)) alert('Username already taken. Please choose another one.');
+    if (users?.find((user) => user.username === username)) alert('Username already taken. Please choose another one.');
     else {
       createUserWithEmailAndPassword(auth, email, password)
         .then(({ user }) => {
