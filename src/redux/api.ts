@@ -1,7 +1,6 @@
-import { Recipe } from '@reduxjs/toolkit/dist/query/core/buildThunks';
 import { db } from '../firebase';
 import { createApi, fakeBaseQuery } from '@reduxjs/toolkit/query/react';
-import { query, collection, orderBy, getDocs, where, onSnapshot, SnapshotListenOptions } from 'firebase/firestore';
+import { query, collection, orderBy, getDocs, where, onSnapshot } from 'firebase/firestore';
 
 export type Comment = {
   id: string;
