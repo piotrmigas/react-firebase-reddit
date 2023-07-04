@@ -16,10 +16,17 @@ type Props = {
 const PostCard = ({ post, user }: Props) => {
   const location = useLocation();
   const isInSubPage = location.pathname.includes('/r/');
+  const isUserPage = location.pathname.includes('/u/');
 
   return (
     <div className='flex mb-4 bg-white rounded'>
-      <Voting user={user} postId={post?.id} />
+      {isUserPage ? (
+        <div className='bg-gray-200 flex-shrink-0 w-10 py-4 text-center rounded-l flex justify-center items-center'>
+          <i className='fas fa-rss fa-xs text-gray-500' />
+        </div>
+      ) : (
+        <Voting user={user} postId={post?.id} />
+      )}
       <div className='w-full p-2'>
         <div className='flex items-center'>
           {!isInSubPage && (

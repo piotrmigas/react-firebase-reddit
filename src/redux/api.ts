@@ -16,7 +16,7 @@ export const api = createApi({
   tagTypes: ['Post', 'Sub', 'Comment', 'PostVote', 'CommentVote', 'User'],
   baseQuery: fakeBaseQuery(),
   endpoints: (builder) => ({
-    getPosts: builder.query<void, void>({
+    getPosts: builder.query<any, void>({
       async queryFn() {
         return {
           data: null,
@@ -43,7 +43,7 @@ export const api = createApi({
       },
       providesTags: ['Post'],
     }),
-    getSubs: builder.query<void, void>({
+    getSubs: builder.query<any, void>({
       async queryFn() {
         return {
           data: null,
@@ -87,7 +87,7 @@ export const api = createApi({
       },
       providesTags: ['User'],
     }),
-    getCommentsByPostId: builder.query<void, string>({
+    getCommentsByPostId: builder.query<any, string>({
       async queryFn() {
         return {
           data: null,
@@ -97,18 +97,19 @@ export const api = createApi({
         let unsubscribe = () => {};
         try {
           await cacheDataLoaded;
-
-          unsubscribe = onSnapshot(
-            query(collection(db, 'comments'), where('postId', '==', postId), orderBy('createdAt', 'desc')),
-            (snapshot) => {
-              updateCachedData(() => {
-                return snapshot?.docs?.map((doc) => ({
-                  id: doc.id,
-                  ...doc.data(),
-                }));
-              });
-            }
-          );
+          if (postId) {
+            unsubscribe = onSnapshot(
+              query(collection(db, 'comments'), where('postId', '==', postId), orderBy('createdAt', 'desc')),
+              (snapshot) => {
+                updateCachedData(() => {
+                  return snapshot?.docs?.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                  }));
+                });
+              }
+            );
+          }
         } catch (error) {
           console.log(error);
         }
@@ -117,37 +118,7 @@ export const api = createApi({
       },
       providesTags: ['Comment'],
     }),
-    getUserComments: builder.query<void, string>({
-      async queryFn() {
-        return {
-          data: null,
-        };
-      },
-      async onCacheEntryAdded(userId, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
-        let unsubscribe = () => {};
-        try {
-          await cacheDataLoaded;
-
-          unsubscribe = onSnapshot(
-            query(collection(db, 'comments'), where('uid', '==', userId), orderBy('createdAt', 'desc')),
-            (snapshot) => {
-              updateCachedData(() => {
-                return snapshot?.docs?.map((doc) => ({
-                  id: doc.id,
-                  ...doc.data(),
-                }));
-              });
-            }
-          );
-        } catch (error) {
-          console.log(error);
-        }
-        await cacheEntryRemoved;
-        unsubscribe();
-      },
-      providesTags: ['Comment'],
-    }),
-    getUserPosts: builder.query<void, string>({
+    getUserComments: builder.query<any, string>({
       async queryFn() {
         return {
           data: null,
@@ -157,18 +128,50 @@ export const api = createApi({
         let unsubscribe = () => {};
         try {
           await cacheDataLoaded;
-
-          unsubscribe = onSnapshot(
-            query(collection(db, 'posts'), where('username', '==', username), orderBy('createdAt', 'desc')),
-            (snapshot) => {
-              updateCachedData(() => {
-                return snapshot?.docs?.map((doc) => ({
-                  id: doc.id,
-                  ...doc.data(),
-                }));
-              });
-            }
-          );
+          if (username) {
+            unsubscribe = onSnapshot(
+              query(collection(db, 'comments'), where('username', '==', username), orderBy('createdAt', 'desc')),
+              (snapshot) => {
+                updateCachedData(() => {
+                  return snapshot?.docs?.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                  }));
+                });
+              }
+            );
+          }
+        } catch (error) {
+          console.log(error);
+        }
+        await cacheEntryRemoved;
+        unsubscribe();
+      },
+      providesTags: ['Comment'],
+    }),
+    getUserPosts: builder.query<any, string>({
+      async queryFn() {
+        return {
+          data: null,
+        };
+      },
+      async onCacheEntryAdded(username, { updateCachedData, cacheDataLoaded, cacheEntryRemoved }) {
+        let unsubscribe = () => {};
+        try {
+          await cacheDataLoaded;
+          if (username) {
+            unsubscribe = onSnapshot(
+              query(collection(db, 'posts'), where('username', '==', username), orderBy('createdAt', 'desc')),
+              (snapshot) => {
+                updateCachedData(() => {
+                  return snapshot?.docs?.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                  }));
+                });
+              }
+            );
+          }
         } catch (error) {
           console.log(error);
         }
@@ -177,7 +180,7 @@ export const api = createApi({
       },
       providesTags: ['Post'],
     }),
-    getVotesByPostId: builder.query<void, string>({
+    getVotesByPostId: builder.query<any, string>({
       async queryFn() {
         return {
           data: null,
@@ -210,7 +213,7 @@ export const api = createApi({
       },
       providesTags: ['PostVote'],
     }),
-    getVotesByCommentId: builder.query<void, string>({
+    getVotesByCommentId: builder.query<any, string>({
       async queryFn() {
         return {
           data: null,
@@ -250,9 +253,9 @@ export const {
   useGetPostsQuery,
   useGetSubsQuery,
   useGetUsersQuery,
-  useLazyGetCommentsByPostIdQuery,
-  useLazyGetUserCommentsQuery,
+  useGetCommentsByPostIdQuery,
+  useGetUserCommentsQuery,
   useGetVotesByPostIdQuery,
-  useLazyGetUserPostsQuery,
+  useGetUserPostsQuery,
   useGetVotesByCommentIdQuery,
 } = api;

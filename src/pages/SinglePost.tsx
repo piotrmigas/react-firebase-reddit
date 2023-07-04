@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -8,12 +7,7 @@ import Comment from '../components/Comment';
 import CommentForm from '../components/CommentForm';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/userSlice';
-import {
-  Comment as CommentType,
-  useGetPostsQuery,
-  useGetSubsQuery,
-  useLazyGetCommentsByPostIdQuery,
-} from '../redux/api';
+import { Comment as CommentType, useGetPostsQuery, useGetSubsQuery, useGetCommentsByPostIdQuery } from '../redux/api';
 import PostCard from '../components/PostCard';
 
 dayjs.extend(relativeTime);
@@ -23,14 +17,10 @@ const SinglePost = () => {
   const { data: posts } = useGetPostsQuery();
   const post = posts?.find((post: Post) => slugify(post.title) === postname);
   const { data: subs } = useGetSubsQuery();
-  const [getCommentsByPostId, { data: postComments }] = useLazyGetCommentsByPostIdQuery();
+  const { data: postComments } = useGetCommentsByPostIdQuery(post?.id);
   const user = useSelector(selectUser);
 
   const sub = subs?.find((i: Sub) => i.name === subname);
-
-  useEffect(() => {
-    if (post?.id) getCommentsByPostId(post.id);
-  }, [post?.id, getCommentsByPostId]);
 
   return (
     <>
