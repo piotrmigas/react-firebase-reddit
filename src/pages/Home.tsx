@@ -5,16 +5,18 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../redux/userSlice';
 import { useGetPostsQuery, useGetSubsQuery } from '../redux/api';
+import { Watch } from 'react-loader-spinner';
 
 dayjs.extend(relativeTime);
 
 const Home = () => {
   const user = useSelector(selectUser);
 
-  const { data: posts, isLoading } = useGetPostsQuery();
+  const { data: posts, isError, isLoading } = useGetPostsQuery();
   const { data: subs } = useGetSubsQuery();
 
-  if (isLoading) return <p className='text-lg text-center mt-4'>Loading..</p>;
+  if (isError) return <p className='text-lg text-center mt-4'>Something went wrong...</p>;
+  if (isLoading) return <Watch width='24' wrapperClass='flex justify-center mt-4' />;
 
   return (
     <div className='container flex pt-4'>
