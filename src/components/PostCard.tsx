@@ -15,8 +15,8 @@ type Props = {
 
 const PostCard = ({ post, user }: Props) => {
   const location = useLocation();
-  const isInSubPage = location.pathname.includes('/r/');
-  const isUserPage = location.pathname.includes('/u/');
+  const isInSubPage = location.pathname.startsWith('/r/');
+  const isUserPage = location.pathname.startsWith('/u/');
 
   return (
     <div className='flex mb-4 bg-white rounded'>
@@ -55,7 +55,7 @@ const PostCard = ({ post, user }: Props) => {
           >
             {post.title}
           </Link>
-          {post.body && post.body.includes('https') ? (
+          {post.body.startsWith('http') ? (
             <a href={post.body} className='text-blue-500'>
               {post.body}
             </a>
